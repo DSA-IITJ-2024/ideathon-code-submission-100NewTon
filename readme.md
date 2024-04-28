@@ -38,10 +38,10 @@ To use the code:
 
 ## License
 
-[Insert license here, e.g., MIT License]
+MIT License
 
 ## Author
 
-[Your name or username]
+Manas Dwivedi
 
 
