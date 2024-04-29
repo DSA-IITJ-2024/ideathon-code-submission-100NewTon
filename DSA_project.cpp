@@ -320,7 +320,7 @@ class Graph
 public:
     std::list<Vertex *> vertices;
     std::vector<std::pair<Vertex *, Vertex *>> edges;
-    std::unordered_map<int,std::string> delivered_at_time_tick;
+    // std::unordered_map<int,std::string> delivered_at_time_tick;
     
     void add_edge(std::string source, std::string destination, int max_parcel_capacity)
     {
@@ -525,25 +525,29 @@ public:
                 {
                     string curr_location = freight_cars_on_curr_location[i]->current_location;
                     freight_cars_on_curr_location[i]->move(nxt_link);
-                    for (auto it : freight_cars_on_curr_location[i]->parcels)
+                    for (auto it3 : freight_cars_on_curr_location[i]->parcels)
                     {
-                        it->current_location = nxt_link;
-                        cout << "At time tick " << t << " " << it->parcel_id << " travelled from " << curr_location << " to " << nxt_link << endl;
-                        if (it->current_location == it->destination)
+                        it3->current_location = nxt_link;
+                        cout << "At time tick " << t << " " << it3->parcel_id << " travelled from " << curr_location << " to " << nxt_link << endl;
+                        if (it3->current_location == it3->destination)
                         {
-                            it->delivered = true;
-                            this->delivered_at_time_tick[it->time_tick] = it->parcel_id;
+                            it3->delivered = true;
+                            // this->delivered_at_time_tick[it3->time_tick] = it3->parcel_id;
                         }
-                        it->time_tick++;
+                        else{
+                            it3->time_tick++;
+                        }
                     }
                     if (freight_cars_on_curr_location[i]->destination_city == nxt_link)
                     {
                         freight_cars_on_curr_location[i]->next_link = " ";
                         freight_cars_on_curr_location[i]->prev_link = curr_location;
                         freight_cars_on_curr_location[i]->sealed = true;
+                        it->sealed_freight_cars.push_back(freight_cars_on_curr_location[i]);
                         // freight_cars_on_curr_location[i]->parcels.clear();
                         freight_cars_on_curr_location[i]->parcels.clear();
                     }
+
                     else
                     {
                         vector<string> path = shortest_path(nxt_link, freight_cars_on_curr_location[i]->destination_city);
@@ -738,20 +742,33 @@ public:
                             return false;
                         }),
                     vertex->all_parcels.end());
+
             }
-            bool all_freight_cars_sealed = true;
+            for(auto& it: parcels_with_time_tick){
+                vector<Parcel*> parcels = it.second;
+                parcels.erase(
+                    remove_if(
+                        parcels.begin(),
+                        parcels.end(),
+                        [&](Parcel *parcel)
+                        {
+                            if(parcel->delivered == true){
+                                return true;
+                            }
+                            return false;
+                        }),
+                        parcels.end());
+            }
+            bool all_parcels_delivered = true;
             for (auto vertex : this->graph.vertices)
             {
-                for (auto freight_car : vertex->freight_cars)
-                {
-                    if (freight_car->sealed == false)
-                    {
-                        all_freight_cars_sealed = false;
-                        break;
+                for(auto it: vertex->all_parcels){
+                    if(!it->delivered){
+                        all_parcels_delivered = false;
                     }
                 }
             }
-            if (all_freight_cars_sealed)
+            if (all_parcels_delivered)
             {
                 break;
             }
@@ -846,10 +863,11 @@ public:
     {
         // return list of parcel_ids of parcels delivered up to time tick t
         std::vector<std::string> delivered_parcels;
-        for(auto& it: this->graph.delivered_at_time_tick){
-            int time_tick = it.first;
-            if(time_tick <= t){
-                delivered_parcels.push_back(it.second);
+        for(auto it: this->graph.vertices){
+            for(auto it2 : it->all_parcels){
+                if(it2->time_tick <= t){
+                    delivered_parcels.push_back(it2->parcel_id);
+                }
             }
         }
         return delivered_parcels;
@@ -862,7 +880,7 @@ int main()
     PRC prc = PRC(2);
     prc.create_graph("C:/Users/manas/OneDrive/Documents/dsa/samples/3/graph.txt");
     prc.process_parcels("C:/Users/manas/OneDrive/Documents/dsa/samples/3/bookings.txt");
-    prc.run_simulation(5);
+    prc.run_simulation(10);
 
     std::cout << "All parcels delivered: " << (prc.all_parcels_delivered() ? "Yes" : "No") << "\n";
     std::cout << "Stranded parcels: ";
@@ -883,7 +901,7 @@ int main()
         std::cout << status_str;
     }
 
-    int time_tick = 5;
+    int time_tick = 10;
     std::cout << "Parcels delivered up to time tick " << time_tick << ": ";
     for (const auto &parcel_id : prc.get_parcels_delivered_up_to_time_tick(time_tick))
     {
