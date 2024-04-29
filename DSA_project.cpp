@@ -865,7 +865,7 @@ public:
         std::vector<std::string> delivered_parcels;
         for(auto it: this->graph.vertices){
             for(auto it2 : it->all_parcels){
-                if(it2->time_tick <= t){
+                if(it2->time_tick <= t && it2->delivered == true){
                     delivered_parcels.push_back(it2->parcel_id);
                 }
             }
