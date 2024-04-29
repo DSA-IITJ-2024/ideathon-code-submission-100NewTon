@@ -880,7 +880,7 @@ int main()
     PRC prc = PRC(2);
     prc.create_graph("C:/Users/manas/OneDrive/Documents/dsa/samples/3/graph.txt");
     prc.process_parcels("C:/Users/manas/OneDrive/Documents/dsa/samples/3/bookings.txt");
-    prc.run_simulation(10);
+    prc.run_simulation(4);
 
     std::cout << "All parcels delivered: " << (prc.all_parcels_delivered() ? "Yes" : "No") << "\n";
     std::cout << "Stranded parcels: ";
