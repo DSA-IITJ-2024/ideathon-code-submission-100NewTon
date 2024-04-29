@@ -859,19 +859,19 @@ public:
     }
 
     // get parcels delivered up to time tick t
-    std::vector<std::string> get_parcels_delivered_up_to_time_tick(int t)
-    {
-        // return list of parcel_ids of parcels delivered up to time tick t
-        std::vector<std::string> delivered_parcels;
-        for(auto it: this->graph.vertices){
-            for(auto it2 : it->all_parcels){
-                if(it2->time_tick <= t && it2->delivered == true){
-                    delivered_parcels.push_back(it2->parcel_id);
-                }
-            }
-        }
-        return delivered_parcels;
-    }
+    // std::vector<std::string> get_parcels_delivered_up_to_time_tick(int t)
+    // {
+    //     // return list of parcel_ids of parcels delivered up to time tick t
+    //     std::vector<std::string> delivered_parcels;
+    //     for(auto it: this->graph.vertices){
+    //         for(auto it2 : it->all_parcels){
+    //             if(it2->time_tick <= t && it2->delivered == true){
+    //                 delivered_parcels.push_back(it2->parcel_id);
+    //             }
+    //         }
+    //     }
+    //     return delivered_parcels;
+    // }
 };
 
 int main()
@@ -901,11 +901,11 @@ int main()
         std::cout << status_str;
     }
 
-    int time_tick = 10;
-    std::cout << "Parcels delivered up to time tick " << time_tick << ": ";
-    for (const auto &parcel_id : prc.get_parcels_delivered_up_to_time_tick(time_tick))
-    {
-        std::cout << parcel_id << " ";
-    }
-    std::cout << "\n";
+    // int time_tick = 10;
+    // std::cout << "Parcels delivered up to time tick " << time_tick << ": ";
+    // for (const auto &parcel_id : prc.get_parcels_delivered_up_to_time_tick(time_tick))
+    // {
+    //     std::cout << parcel_id << " ";
+    // }
+    // std::cout << "\n";
 }
